@@ -11,7 +11,7 @@
 		"homepage": "https://fabricmc.net/",
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
-	"license": "LGPL-3.0",
+	"license": "LGPL-3.0 AND Hypixel's Fan Content Policy",
 	"icon": "assets/dailyrewards/textures/icon.png",
 	"environment": "*",
 	"entrypoints": {
