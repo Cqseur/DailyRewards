@@ -89,7 +89,7 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
                 }
             }
             if (flipping[idx]) {
-                flipProgress[idx] += delta * DailyRewardsConfig.flipSpeed // ~0.25s
+                flipProgress[idx] += delta * DailyRewardsConfig.flipSpeed 
                 if (flipProgress[idx] >= 1f) {
                     flipProgress[idx] = 1f
                     flipping[idx] = false
@@ -113,7 +113,7 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
             context.matrices.push()
             context.matrices.translate(centreX, (drawY + drawH / 2f), 0f)
             val scaleXRaw = kotlin.math.cos(flipProgress[idx] * Math.PI).toFloat()
-            val scaleX = kotlin.math.abs(scaleXRaw) // avoid negative mirror invisibility
+            val scaleX = kotlin.math.abs(scaleXRaw) 
             context.matrices.scale(scaleX, 1f, 1f)
             context.matrices.translate(-centreX, -(drawY + drawH / 2f), 0f)
             context.drawTexture(RenderLayer::getGuiTextured, tex, drawX, drawY, 0f, 0f, drawW, drawH, drawW, drawH)
@@ -127,7 +127,7 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
                     Identifier.of("dailyrewards", "textures/gui/glow_${card.rarity}.png")
                 }
                 if (isLegendary) {
-                    val t = (System.currentTimeMillis() % 2000L).toFloat() / 2000f // 2-second loop
+                    val t = (System.currentTimeMillis() % 2000L).toFloat() / 2000f 
                     val zoom = 1f + 0.05f * kotlin.math.sin(t * 2f * Math.PI).toFloat()
                     context.matrices.push()
                     context.matrices.translate(centreX, (drawY + drawH / 2f), 0f)
@@ -167,8 +167,8 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
                 val nameY = (nameBase.toFloat() / scale).roundToInt()
                 val amountBase = y + cardHeight - 25 + if (hovered) 4 else 0
                 val amountY = (amountBase.toFloat() / scale).roundToInt()
-                    // wrap long names onto two lines ----
-                    val maxNameWidth = cardWidth - 10 // margin
+                    //---- wrap long names onto two lines ----//
+                    val maxNameWidth = cardWidth - 10 
                     var firstLine = nameStr
                     var secondLine: String? = null
                     if (textRenderer.getWidth(nameStr) > maxNameWidth && nameStr.contains(" ")) {
@@ -199,7 +199,7 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
                     /*
                     // downscale name to fit 
                     val nameWidthPx = textRenderer.getWidth(nameStr)
-                    val maxNameWidth = cardWidth - 10 // margin
+                    val maxNameWidth = cardWidth - 10 
                     val nameScale = if (nameWidthPx > maxNameWidth) maxNameWidth.toFloat() / nameWidthPx else 1f
                     context.matrices.push()
                     context.matrices.scale(nameScale, nameScale, 1f)
@@ -259,7 +259,7 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
                 val mc = MinecraftClient.getInstance()
                 val card = offer.cards[idx]
                 val rarityFormat = rarityToFormat(card.rarity)
-                val msg: MutableText = Text.literal("§6[§eDailyRewards§6]§r ")
+                val msg: MutableText = Text.literal(DailyRewardsConfig.PREFIX)
                     .formatted(Formatting.WHITE)
                     .append(Text.literal("Claiming reward #${idx + 1}: ").formatted(Formatting.RESET))
                     .append(Text.literal("${card.rarity.uppercase()} ").formatted(rarityFormat, Formatting.BOLD))
@@ -267,7 +267,13 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
                     .append(Text.literal(" x${card.amount}").formatted(Formatting.RESET))
 
                 mc.player?.sendMessage(msg, false)
-                claimLabel = "Reward Claimed, comeback tomorrow for more rewards!"
+
+                RewardFetcher.currentStreak += 1
+                if (RewardFetcher.currentStreak > RewardFetcher.highestStreak) {
+                    RewardFetcher.highestStreak = RewardFetcher.currentStreak
+                }
+
+                 claimLabel = "Reward Claimed, comeback tomorrow for more rewards!"
                 selectedIndex = idx
                     initialX = startX + idx * (cardWidth + cardSpacing)
                 moveStart = System.currentTimeMillis()

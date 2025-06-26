@@ -7,6 +7,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 object DailyRewardsConfig {
+    const val PREFIX: String = "§6[§eDailyRewards§6]§r "
+
     private val gson = Gson()
     private val configPath: Path = FabricLoader.getInstance().configDir.resolve("dailyrewards.json")
 

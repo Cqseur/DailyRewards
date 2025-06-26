@@ -11,6 +11,7 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.text.Text
 
 import cqseur.dailyrewards.RewardFetcher
+import cqseur.dailyrewards.config.DailyRewardsConfig
 
 object RewardClaimer {
     private val logger = LoggerFactory.getLogger("[DailyRewards-Client]")
@@ -22,7 +23,7 @@ object RewardClaimer {
         if (token.isNullOrEmpty() || cookieHeader.isEmpty()) {
             MinecraftClient.getInstance().execute {
                 MinecraftClient.getInstance().player?.sendMessage(
-                    Text.literal("§cDailyRewards: Cannot claim, missing token/cookies"), false
+                    Text.literal(DailyRewardsConfig.PREFIX + "§cCannot claim, missing token/cookies"), false
                 )
             }
             logger.warn("Missing token or cookies, cannot claim reward")
@@ -50,7 +51,7 @@ object RewardClaimer {
                         logger.warn("Claim failed code ${resp.code}")
                         MinecraftClient.getInstance().execute {
                             MinecraftClient.getInstance().player?.sendMessage(
-                                Text.literal("§cDailyRewards: Claim failed (${resp.code})"), false
+                                Text.literal(DailyRewardsConfig.PREFIX + "§cClaim failed (${resp.code})"), false
                             )
                         }
                     }

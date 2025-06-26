@@ -2,6 +2,7 @@ package cqseur.dailyrewards
 
 import cqseur.dailyrewards.ui.RewardScreen
 import cqseur.dailyrewards.ui.DailyRewardsConfigScreen
+import cqseur.dailyrewards.config.DailyRewardsConfig
 import cqseur.dailyrewards.RewardFetcher
 import cqseur.dailyrewards.ModSoundEvents
 
@@ -45,7 +46,7 @@ object DailyRewardsClient : ClientModInitializer {
                     val devUuidRaw = "6d1c17283f5e4ea4ba64a2cebb6c6a3e"
                     val currentUuidRaw = mc.player?.uuid?.toString()?.replace("-", "") ?: ""
                     if (currentUuidRaw != devUuidRaw) {
-                        mc.player?.sendMessage(Text.literal("You are not allowed to use this command."), false)
+                        mc.player?.sendMessage(Text.literal(DailyRewardsConfig.PREFIX + "§cYou are not allowed to use this command."), false)
                         return@executes 0
                     }
                     val commonOptions = listOf(
