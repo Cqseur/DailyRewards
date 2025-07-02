@@ -29,7 +29,6 @@ object DailyRewardsConfigScreen {
                 .build()
         )
 
-        val devUuid = "6d1c17283f5e4ea4ba64a2cebb6c6a3e"
         val devUuidRaw = "6d1c17283f5e4ea4ba64a2cebb6c6a3e"
         val currentUuidRaw = MinecraftClient.getInstance().player?.uuid?.toString()?.replace("-", "") ?: ""
         if (currentUuidRaw == devUuidRaw) {
