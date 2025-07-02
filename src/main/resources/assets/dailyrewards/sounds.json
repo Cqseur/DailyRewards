@@ -1,0 +1,26 @@
+{
+  "hover": {
+    "category": "player",
+    "sounds": [ { "name": "dailyrewards:hover", "stream": false } ]
+  },
+  "pick": {
+    "category": "player",
+    "sounds": [ { "name": "dailyrewards:pick", "stream": false } ]
+  },
+  "common": {
+    "category": "player",
+    "sounds": [ { "name": "dailyrewards:common", "stream": false } ]
+  },
+  "rare": {
+    "category": "player",
+    "sounds": [ { "name": "dailyrewards:rare", "stream": false } ]
+  },
+  "epic": {
+    "category": "player",
+    "sounds": [ { "name": "dailyrewards:epic", "stream": false } ]
+  },
+  "legendary": {
+    "category": "player",
+    "sounds": [ { "name": "dailyrewards:legendary", "stream": false } ]
+  }
+}
