@@ -68,7 +68,7 @@
 - [📋 **ModMenu**](https://modrinth.com/mod/modmenu) `9.0.0`
 
 #### Steps
-1. **Download** the latest version from [Modrinth](https://modrinth.com/mod/hypixel-dailyrewards/versions)
+1. **Download** the latest version from [Release](https://github.com/cqseur/DailyRewards/releases)
 2. **Install all required dependencies** listed above
 3. **Place** all `.jar` files in your `mods` folder
 4. **Launch** Minecraft with Fabric
