@@ -292,10 +292,10 @@ This project is licensed under the **LGPL-3.0-only License** - see the [LICENSE]
 
 ### 🌟 **Support the Project!**
 
-![Modrinth Downloads](https://img.shields.io/modrinth/dt/hypixel-dailyrewards?logo=modrinth&style=for-the-badge&color=00AF5C)
-![GitHub Stars](https://img.shields.io/github/stars/Cqseur/DailyRewards?style=for-the-badge&color=yellow)
-![GitHub Forks](https://img.shields.io/github/forks/Cqseur/DailyRewards?style=for-the-badge&color=blue)
-![GitHub Issues](https://img.shields.io/github/issues/Cqseur/DailyRewards?style=for-the-badge&color=red)
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/hypixel-dailyrewards?logo=modrinth&style=for-the-badge&color=00AF5C)](https://modrinth.com/mod/hypixel-dailyrewards)
+[![GitHub Stars](https://img.shields.io/github/stars/Cqseur/DailyRewards?style=for-the-badge&color=yellow)](https://github.com/Cqseur/DailyRewards/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/Cqseur/DailyRewards?style=for-the-badge&color=blue)](https://github.com/Cqseur/DailyRewards/network/members)
+[![GitHub Issues](https://img.shields.io/github/issues/Cqseur/DailyRewards?style=for-the-badge&color=red)](https://github.com/Cqseur/DailyRewards/issues)
 
 **Made with ❤️ for the Hypixel community**
 
