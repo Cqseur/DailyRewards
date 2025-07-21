@@ -160,8 +160,8 @@ The mod integrates seamlessly with Hypixel's official rewards system:
 ### Build Steps
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/DailyRewards1.21.5.git
-cd DailyRewards1.21.5
+git clone https://github.com/Cqseur/DailyRewards.git
+cd DailyRewards
 
 # Build the mod
 ./gradlew clean build
@@ -173,10 +173,6 @@ cd DailyRewards1.21.5
 ```bash
 # Run in development environment
 ./gradlew runClient
-
-# Generate IDE files
-./gradlew genEclipseRuns
-./gradlew genIdeaRuns
 ```
 
 ---
