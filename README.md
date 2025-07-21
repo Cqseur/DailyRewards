@@ -2,11 +2,11 @@
 
 <div align="center">
 
-![Modrinth Downloads](https://img.shields.io/modrinth/dt/hypixel-dailyrewards?logo=modrinth&label=downloads&style=for-the-badge&color=00AF5C)
-![Modrinth Game Versions](https://img.shields.io/modrinth/game-versions/hypixel-dailyrewards?logo=modrinth&label=game%20versions&style=for-the-badge)
-![Modrinth Version](https://img.shields.io/modrinth/v/hypixel-dailyrewards?logo=modrinth&label=version&style=for-the-badge&color=00AF5C)
-![GitHub Issues](https://img.shields.io/github/issues/Cqseur/DailyRewards?style=for-the-badge&color=red)
-![License](https://img.shields.io/badge/License-LGPL--3.0-blue?style=for-the-badge)
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/hypixel-dailyrewards?logo=modrinth&label=downloads&style=for-the-badge&color=00AF5C)](https://modrinth.com/mod/hypixel-dailyrewards)
+[![Modrinth Game Versions](https://img.shields.io/modrinth/game-versions/hypixel-dailyrewards?logo=modrinth&label=game%20versions&style=for-the-badge)](https://modrinth.com/mod/hypixel-dailyrewards)
+[![Modrinth Version](https://img.shields.io/modrinth/v/hypixel-dailyrewards?logo=modrinth&label=version&style=for-the-badge&color=00AF5C)](https://modrinth.com/mod/hypixel-dailyrewards/versions)
+[![GitHub Issues](https://img.shields.io/github/issues/Cqseur/DailyRewards?style=for-the-badge&color=red)](https://github.com/Cqseur/DailyRewards/issues)
+[![License](https://img.shields.io/badge/License-LGPL--3.0-blue?style=for-the-badge)](https://github.com/Cqseur/DailyRewards/blob/main/LICENSE)
 
 **🎁 Automate Hypixel Skyblock daily rewards with beautiful card animations and instant claim notifications**
 
