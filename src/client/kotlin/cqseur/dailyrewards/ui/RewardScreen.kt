@@ -43,8 +43,17 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
         else -> Formatting.WHITE
     }
     
-
-
+    private fun playRaritySound(rarity: String) {
+        val revealSound: SoundEvent = when(rarity) {
+            "common" -> ModSoundEvents.COMMON
+            "rare" -> ModSoundEvents.RARE
+            "epic" -> ModSoundEvents.EPIC
+            "legendary" -> ModSoundEvents.LEGENDARY
+            else -> ModSoundEvents.COMMON
+        }
+        MinecraftClient.getInstance().soundManager.play(PositionedSoundInstance.master(revealSound, 1f))
+    }
+    
     private val revealed = MutableList(offer.cards.size) { false }
     private val flipping = MutableList(offer.cards.size) { false }
     private val flipProgress = MutableList(offer.cards.size) { 0f }
@@ -84,6 +93,7 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
                 if (!DailyRewardsConfig.flipAnimation) {
                     revealed[idx] = true
                     flipProgress[idx] = 1f
+                    playRaritySound(card.rarity)
                 } else {
                     flipping[idx] = true
                 }
@@ -94,14 +104,7 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
                     flipProgress[idx] = 1f
                     flipping[idx] = false
                     revealed[idx] = true
-                    val revealSound: SoundEvent = when(card.rarity) {
-                        "common" -> ModSoundEvents.COMMON
-                        "rare" -> ModSoundEvents.RARE
-                        "epic" -> ModSoundEvents.EPIC
-                        "legendary" -> ModSoundEvents.LEGENDARY
-                        else -> ModSoundEvents.COMMON
-                    }
-                    MinecraftClient.getInstance().soundManager.play(PositionedSoundInstance.master(revealSound, 1f))
+                    playRaritySound(card.rarity)
                 }
             }
             val tex: Identifier = if (flipProgress[idx] < 0.5f) cardBackTex else Identifier.of("dailyrewards", "textures/gui/card_${card.rarity}.png")

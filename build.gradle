@@ -99,7 +99,6 @@ jar {
 	}
 }
 
-// configure the maven publication
 publishing {
 	publications {
 		create("mavenJava", MavenPublication) {
@@ -115,4 +114,215 @@ publishing {
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
 	}
+}
+
+def copyToClipboard = { File file ->
+    if (System.getProperty('os.name').toLowerCase().contains('windows')) {
+        exec {
+            commandLine 'powershell', '-NoProfile', '-Command',
+                        "Set-Clipboard -Path '${file.absolutePath}'"
+        }
+    }
+}
+
+tasks.named('remapJar') {
+    doLast {
+        copyToClipboard(archiveFile.get().asFile)
+    }
+}
+
+tasks.named('build') {
+    finalizedBy('copyLatestJar')
+}
+tasks.register('copyLatestJar') {
+    doLast {
+        def libs = file("$buildDir/libs").listFiles().findAll { it.name.endsWith('.jar') && !it.name.contains('-dev') }
+        if (libs) {
+            copyToClipboard(libs.max { it.lastModified() })
+        }
+    }
+}
+
+tasks.register('copyToMods') {
+    dependsOn 'remapJar'
+    mustRunAfter 'build', 'remapJar', 'jar'
+    
+    doLast {
+        def libs = file("$buildDir/libs").listFiles().findAll { 
+            it.name.endsWith('.jar') && 
+            !it.name.contains('-dev') && 
+            !it.name.contains('-sources') && 
+            !it.name.contains('-javadoc') &&
+            !it.name.contains('-shadow')
+        }
+        if (libs) {
+            def mainJar = libs.find { jar ->
+                def name = jar.name
+                def versionPattern = /.*\d+\.\d+\.\d+-for-.*\.jar$/
+                return name.matches(versionPattern) && 
+                       !name.contains('-sources') && 
+                       !name.contains('-dev') &&
+                       !name.contains('-javadoc')
+            }
+            def latestJar = mainJar ?: libs.max { it.lastModified() }
+            
+            def envFile = file('.env')
+            def envVars = [:]
+            if (envFile.exists()) {
+                envFile.readLines().each { line ->
+                    if (line.contains('=') && !line.startsWith('#')) {
+                        def parts = line.split('=', 2)
+                        envVars[parts[0].trim()] = parts[1].trim()
+                    }
+                }
+            }
+            
+            // Be sure to create a .env file in the root directory of the project and fill it with the following variables:
+            // GameModPath: path to the mods folder of your game
+            // GameModPath2: this one should be useless for you since i made it to have 2 seperate game environment with specific mods 
+            def modsPaths = []
+            if (envVars.GameModPath) modsPaths.add(envVars.GameModPath)
+            if (envVars.GameModPath2) modsPaths.add(envVars.GameModPath2)
+            
+            modsPaths.each { pathStr ->
+                def modsDir = file(pathStr)
+                
+                if (!modsDir.exists()) {
+                    modsDir.mkdirs()
+                    println "Created directory: ${modsDir.absolutePath}"
+                }
+                
+                modsDir.listFiles().each { oldMod ->
+                    if (oldMod.name.startsWith("${project.archives_base_name}-") && oldMod.name.endsWith('.jar')) {
+                        oldMod.delete()
+                        println "Removed old mod: ${oldMod.name} from ${modsDir.name}"
+                    }
+                }
+                
+                def targetFile = new File(modsDir, latestJar.name)
+                copy {
+                    from latestJar
+                    into modsDir
+                }
+                println "[Success] Mod copied to: ${targetFile.absolutePath}"
+            }
+        }
+    }
+}
+
+tasks.register('iP') {
+    doLast {
+        incrementVersion('patch')
+    }
+}
+
+tasks.register('im') {
+    doLast {
+        incrementVersion('minor')
+    }
+}
+
+tasks.register('iM') {
+    doLast {
+        incrementVersion('major')
+    }
+}
+
+tasks.register('increment') {
+    doLast {
+        incrementVersion('patch')
+    }
+}
+
+def incrementVersion(String type) {
+    def propsFile = file('gradle.properties')
+    
+    def reloadProperties = {
+        def props = new Properties()
+        propsFile.withInputStream { props.load(it) }
+        props.each { key, value ->
+            project.ext.set(key.toString(), value.toString())
+        }
+        if (props.containsKey('mod_version')) {
+            project.version = props.getProperty('mod_version')
+        }
+    }
+    
+    def lines = propsFile.readLines()
+    def currentVersion = null
+    def versionLineIndex = -1
+    
+    def filteredLines = lines.findAll { line ->
+        def trimmed = line.trim()
+        return !trimmed.startsWith('# Mis à jour par la tâche') && 
+               !trimmed.matches(/# [a-z]+ \d+ [a-z]+ \d+ à \d+:\d+/)
+    }
+    
+    for (int i = 0; i < filteredLines.size(); i++) {
+        def line = filteredLines[i].trim()
+        if (line.startsWith('mod_version=')) {
+            currentVersion = line.substring('mod_version='.length())
+            versionLineIndex = i
+            break
+        }
+    }
+    
+    if (currentVersion == null) {
+        throw new RuntimeException("mod_version not found in gradle.properties")
+    }
+    
+    println "[i] Current version: ${currentVersion}"
+    
+    // mod_version format must always follow this pattern <M>.<m>.<p>-for-<minecraft_version> Ex: 0.1.0-for-1.21.5 
+    def versionRegex = /(\d+)\.(\d+)\.(\d+)(-for-.+)/
+    def matcher = currentVersion =~ versionRegex
+    
+    if (!matcher.matches()) {
+        throw new RuntimeException("Version format not supported: ${currentVersion}. Expected format: <major>.<minor>.<patch>-for-<minecraft_version>")
+    }
+    
+    def major = matcher[0][1] as Integer
+    def minor = matcher[0][2] as Integer  
+    def patch = matcher[0][3] as Integer
+    def suffix = matcher[0][4]
+    
+    switch (type) {
+        case 'patch':
+            patch++
+            break
+        case 'minor':
+            minor++
+            patch = 0
+            break
+        case 'major':
+            major++
+            minor = 0
+            patch = 0
+            break
+    }
+    
+    def newVersion = "${major}.${minor}.${patch}${suffix}"
+    
+    filteredLines[versionLineIndex] = "mod_version=${newVersion}"
+    
+    def now = new Date()
+    def frenchFormat = new java.text.SimpleDateFormat("EEEE d MMMM yyyy '\u00e0' HH:mm", java.util.Locale.FRENCH)
+    def timestamp = frenchFormat.format(now)
+    
+    propsFile.withWriter('UTF-8') { writer ->
+        writer.println("# Mis \u00e0 jour par la t\u00e2che increment${type.capitalize()}")
+        writer.println("# ${timestamp}")
+
+        if (!filteredLines.isEmpty() && !filteredLines[0].trim().isEmpty()) {
+            writer.println("")
+        }
+        
+        filteredLines.each { line ->
+            writer.println(line)
+        }
+    }
+    
+    println "[^] Version updated: ${currentVersion} To ${newVersion}"
+    
+    reloadProperties()
 }

@@ -11,6 +11,7 @@ classes/
 
 # idea
 
+.env
 .idea/
 *.iml
 *.ipr
