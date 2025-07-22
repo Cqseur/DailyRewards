@@ -2,9 +2,9 @@
 
 <div align="center">
 
-[![Modrinth Downloads](https://img.shields.io/modrinth/dt/hypixel-dailyrewards?logo=modrinth&label=downloads&style=for-the-badge&color=00AF5C)](https://modrinth.com/mod/hypixel-dailyrewards)
-[![Modrinth Game Versions](https://img.shields.io/modrinth/game-versions/hypixel-dailyrewards?logo=modrinth&label=game%20versions&style=for-the-badge)](https://modrinth.com/mod/hypixel-dailyrewards)
-[![Modrinth Version](https://img.shields.io/modrinth/v/hypixel-dailyrewards?logo=modrinth&label=version&style=for-the-badge&color=00AF5C)](https://modrinth.com/mod/hypixel-dailyrewards/versions)
+[![GitHub Release](https://img.shields.io/github/v/release/Cqseur/DailyRewards?style=for-the-badge&logo=github&color=181717)](https://github.com/Cqseur/DailyRewards/releases)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.5-green?style=for-the-badge&logo=minecraft)](https://minecraft.net)
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/hypixel-dailyrewards?style=for-the-badge&logo=modrinth&color=00AF5C)](https://modrinth.com/mod/hypixel-dailyrewards)
 [![GitHub Issues](https://img.shields.io/github/issues/Cqseur/DailyRewards?style=for-the-badge&color=red)](https://github.com/Cqseur/DailyRewards/issues)
 [![License](https://img.shields.io/badge/License-LGPL--3.0-blue?style=for-the-badge)](https://github.com/Cqseur/DailyRewards/blob/main/LICENSE)
 
