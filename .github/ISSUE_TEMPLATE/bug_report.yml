@@ -1,0 +1,189 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior
+title: "[BUG] "
+labels: ["bug", "needs-triage"]
+assignees:
+  - Cqseur
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🎁 DailyRewards Bug Report
+        
+        Thanks for taking the time to report a bug! Please fill out this form completely to help us understand and fix the issue.
+        
+        **Before submitting:** Please check if this issue has already been reported in the [Issues](https://github.com/Cqseur/DailyRewards/issues) section.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "🐛 Bug Description"
+      description: "A clear and concise description of what the bug is."
+      placeholder: "Example: When I try to claim my daily reward, the mod crashes..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: "🔄 Steps to Reproduce"
+      description: "Tell us how to reproduce this bug step by step."
+      placeholder: |
+        1. Open Minecraft
+        2. Join Hypixel server
+        3. Receive daily reward link in chat
+        4. Click on the reward card
+        5. Game crashes
+      value: |
+        1. 
+        2. 
+        3. 
+        4. 
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: "✅ Expected Behavior"
+      description: "What should happen instead?"
+      placeholder: "The reward should be claimed successfully and I should receive the items..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: "❌ Actual Behavior"
+      description: "What actually happens?"
+      placeholder: "The game crashes with a NullPointerException..."
+    validations:
+      required: true
+
+  - type: input
+    id: mod-version
+    attributes:
+      label: "📦 DailyRewards Version"
+      description: "Which version of DailyRewards are you using? Check with **ModMenu** in-game or in `mods/` folder"
+      placeholder: "Example: 1.0.3-for-1.21.5"
+    validations:
+      required: true
+
+  - type: input
+    id: minecraft-version
+    attributes:
+      label: "🎮 Minecraft Version"
+      description: "Which Minecraft version are you using?"
+      placeholder: "Minecraft 1.21.5"
+    validations:
+      required: true
+
+  - type: input
+    id: fabric-loader-version
+    attributes:
+      label: "🔧 Fabric Loader Version"
+      description: "What version of Fabric Loader are you using? Check in your **launcher settings** (https://imgur.com/a/7v1wCoK)"
+      placeholder: "Example: 0.16.14"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: client-type
+    attributes:
+      label: "💻 Minecraft Client"
+      description: "Which Minecraft client are you using?"
+      options:
+        - "Minecraft Official Launcher"
+        - "LunarClient"
+        - "Badlion Client"
+        - "MultiMC"
+        - "PrismLauncher"
+        - "CurseForge"
+        - "Modrinth App"
+        - "Other (please specify in description)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: other-mods
+    attributes:
+      label: "📋 Other Mods Installed"
+      description: "List other mods you have installed that might be related to this bug."
+      placeholder: |
+        - Mod Name 1 (version)
+        - Mod Name 2 (version)
+        - etc...
+      value: |
+        - 
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: "📄 Logs/Crash Reports"
+      description: |
+        Please provide relevant logs or crash reports. You can find them in:
+        - `.minecraft/logs/latest.log`
+        - `.minecraft/crash-reports/` (if the game crashed)
+        
+        **Tip:** Use code blocks (```) to format your logs properly.
+      placeholder: |
+        ```
+        Paste your logs here...
+        ```
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: "📸 Screenshots/Videos"
+      description: "If applicable, add screenshots or videos to help explain your problem."
+      placeholder: "You can drag and drop images directly into this text area."
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: "🔁 Bug Frequency"
+      description: "How often does this bug occur?"
+      options:
+        - "Always (100%)"
+        - "Often (>50%)"
+        - "Sometimes (10-50%)"
+        - "Rarely (<10%)"
+        - "Only once"
+    validations:
+      required: false
+
+  - type: input
+    id: operating-system
+    attributes:
+      label: "💻 Operating System"
+      description: "What operating system are you using?"
+      placeholder: "Example: Windows 11, macOS Sonoma, Ubuntu 22.04"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: additional-info
+    attributes:
+      label: "📋 Additional Information"
+      description: "Please check all that apply:"
+      options:
+        - label: "This bug occurs on Hypixel server specifically"
+        - label: "This bug occurs in single-player worlds"
+        - label: "This bug occurs on other servers"
+        - label: "I have tried restarting Minecraft"
+        - label: "I have tried with only DailyRewards installed (no other mods)"
+        - label: "I have searched for existing issues and this is not a duplicate"
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🔗 Useful Links
+        
+        - [DailyRewards on Modrinth](https://modrinth.com/mod/hypixel-dailyrewards)
+        - [Discord Support](https://discord.gg/tkUqGeDN5J)
+        - [GitHub Repository](https://github.com/Cqseur/DailyRewards)
+        
+        **Thank you for reporting this bug! We'll look into it as soon as possible.** 🎁
