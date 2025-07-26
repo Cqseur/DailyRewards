@@ -3,7 +3,7 @@ package cqseur.dailyrewards
 import net.fabricmc.api.ModInitializer
 import org.slf4j.LoggerFactory
 
-object DailyRewards : ModInitializer {
+class DailyRewards : ModInitializer {
     private val logger = LoggerFactory.getLogger("[DailyRewards]")
  
 	override fun onInitialize() {

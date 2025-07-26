@@ -1,0 +1,78 @@
+name: Nightly Release
+
+on:
+  workflow_run:
+    workflows: ["build"]
+    branches: [main]
+    types:
+      - completed
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Récupérer le code
+      - uses: actions/checkout@v4
+
+      # 2. Setup Java (nécessaire pour lire gradle.properties)
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # 3. Lire la version depuis gradle.properties
+      - name: Get version from gradle.properties
+        id: get_version
+        run: |
+          VERSION=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2)
+          # Retirer le suffixe -for-1.21.5 pour le tag
+          CLEAN_VERSION=$(echo $VERSION | sed 's/-for-1\.21\.5//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "clean_version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
+          echo "Version complète: $VERSION"
+          echo "Version clean: $CLEAN_VERSION"
+
+      # 4. Télécharger l'artifact jar généré par le workflow build
+      - name: Download build artifacts
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          run_id: ${{ github.event.workflow_run.id }}
+          name: Artifacts
+          path: artifacts
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 5. Publier la release avec le jar téléchargé
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.get_version.outputs.clean_version }}
+          name: "DailyRewards v${{ steps.get_version.outputs.clean_version }}"
+          body: |
+            ## 🎁 DailyRewards v${{ steps.get_version.outputs.clean_version }}
+            
+            **📥 Download:** `dailyrewards-${{ steps.get_version.outputs.version }}.jar`
+            
+            **🔧 Compatibility:**
+            - Minecraft 1.21.5
+            - Fabric Loader 0.16.14+
+            - Fabric API required
+            
+            **📋 Changes:**
+            Build from commit: ${{ github.sha }}
+            
+            **🔗 Links:**
+            - [Modrinth Page](https://modrinth.com/mod/hypixel-dailyrewards)
+            - [GitHub Repository](https://github.com/Cqseur/DailyRewards)
+            
+          prerelease: false
+          draft: false  
+          files: |
+            artifacts/**/dailyrewards-*.jar

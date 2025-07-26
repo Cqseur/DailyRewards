@@ -21,7 +21,7 @@ import java.util.regex.Pattern
 import net.minecraft.client.MinecraftClient
 import kotlin.random.Random
 
-object DailyRewardsClient : ClientModInitializer {
+class DailyRewardsClient : ClientModInitializer {
     private var pendingOffer: RewardOffer? = null
     private var openConfigNextTick = false
     private val logger = LoggerFactory.getLogger("[DailyRewards-Client]")
