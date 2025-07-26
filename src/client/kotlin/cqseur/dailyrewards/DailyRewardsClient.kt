@@ -27,7 +27,7 @@ object DailyRewardsClient : ClientModInitializer {
     private val logger = LoggerFactory.getLogger("[DailyRewards-Client]")
 
     private val linkPattern: Pattern = Pattern.compile("https://rewards\\.hypixel\\.net/claim-reward/([a-zA-Z0-9_-]+)")
-
+ 
     override fun onInitializeClient() {
         ModSoundEvents.init()
         ClientCommandRegistrationCallback.EVENT.register { dispatcher, _ ->

@@ -3,8 +3,13 @@
 <div align="center">
 
 [![GitHub Release](https://img.shields.io/github/v/release/Cqseur/DailyRewards?style=for-the-badge&logo=github&color=181717)](https://github.com/Cqseur/DailyRewards/releases)
+<<<<<<< Updated upstream
 [![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.5-green?style=for-the-badge&logo=minecraft)](https://minecraft.net)
 [![Modrinth Downloads](https://img.shields.io/modrinth/dt/hypixel-dailyrewards?style=for-the-badge&logo=modrinth&color=00AF5C)](https://modrinth.com/mod/hypixel-dailyrewards)
+=======
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.5-green?style=for-the-badge&logo=github)](https://minecraft.net)
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/hypixel-dailyrewards?style=for-the-badge&logo=modrinth&color=00AF5C)](https://modrinth.com/mod/hypixel-dailyrewards) 
+>>>>>>> Stashed changes
 [![GitHub Issues](https://img.shields.io/github/issues/Cqseur/DailyRewards?style=for-the-badge&color=red)](https://github.com/Cqseur/DailyRewards/issues)
 [![License](https://img.shields.io/badge/License-LGPL--3.0-blue?style=for-the-badge)](https://github.com/Cqseur/DailyRewards/blob/main/LICENSE)
 

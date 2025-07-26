@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 
 object DailyRewards : ModInitializer {
     private val logger = LoggerFactory.getLogger("[DailyRewards]")
-
+ 
 	override fun onInitialize() {
 		logger.info("--------------------------- DailyRewards initialized ---------------------------")
 	}
