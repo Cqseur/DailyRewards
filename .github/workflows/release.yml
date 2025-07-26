@@ -1,4 +1,4 @@
-name: Nightly Release
+name: Github Automated Release
 
 on:
   workflow_run:
@@ -16,17 +16,14 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      # 1. Récupérer le code
       - uses: actions/checkout@v4
 
-      # 2. Setup Java (nécessaire pour lire gradle.properties)
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      # 3. Lire la version depuis gradle.properties
       - name: Get version from gradle.properties
         id: get_version
         run: |
@@ -38,7 +35,6 @@ jobs:
           echo "Version complète: $VERSION"
           echo "Version clean: $CLEAN_VERSION"
 
-      # 4. Télécharger l'artifact jar généré par le workflow build
       - name: Download build artifacts
         uses: dawidd6/action-download-artifact@v2
         with:
@@ -47,7 +43,6 @@ jobs:
           path: artifacts
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      # 5. Publier la release avec le jar téléchargé
       - name: Create Release
         uses: softprops/action-gh-release@v1
         env:
