@@ -25,6 +25,37 @@ body:
       required: true
 
   - type: textarea
+    id: expected-behavior
+    attributes:
+      label: "✅ Expected Behavior"
+      description: "What should happen instead?"
+      placeholder: "The reward should be claimed successfully and I should receive the items..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: "❌ Actual Behavior"
+      description: "What actually happens?"
+      placeholder: "The game crashes with a NullPointerException..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: "📄 Logs/Crash Reports"
+      description: |
+        Please provide relevant logs or crash reports. You can find them in:
+        - `.minecraft/logs/latest.log`
+        - `.minecraft/crash-reports/` (if the game crashed)
+      value: |
+        ```
+        Paste your logs here...
+        ```
+
+  - type: textarea
     id: steps-to-reproduce
     attributes:
       label: "🔄 Steps to Reproduce"
@@ -42,24 +73,6 @@ body:
         4. 
     validations:
       required: false
-
-  - type: textarea
-    id: expected-behavior
-    attributes:
-      label: "✅ Expected Behavior"
-      description: "What should happen instead?"
-      placeholder: "The reward should be claimed successfully and I should receive the items..."
-    validations:
-      required: true
-
-  - type: textarea
-    id: actual-behavior
-    attributes:
-      label: "❌ Actual Behavior"
-      description: "What actually happens?"
-      placeholder: "The game crashes with a NullPointerException..."
-    validations:
-      required: true
 
   - type: input
     id: mod-version
@@ -109,28 +122,16 @@ body:
     id: other-mods
     attributes:
       label: "📋 Other Mods Installed"
-      description: "List other mods you have installed that might be related to this bug."
+      description: |
+        List other mods you have installed that might be related to this bug.
+          - You can alternatively upload a screenshot of your `mods/` folder.
       placeholder: |
         - Mod Name 1 (version)
         - Mod Name 2 (version)
+        - Screenshot
         - etc...
       value: |
         - 
-
-  - type: textarea
-    id: logs
-    attributes:
-      label: "📄 Logs/Crash Reports"
-      description: |
-        Please provide relevant logs or crash reports. You can find them in:
-        - `.minecraft/logs/latest.log`
-        - `.minecraft/crash-reports/` (if the game crashed)
-        
-        **Tip:** Use code blocks (```) to format your logs properly.
-      placeholder: |
-        ```
-        Paste your logs here...
-        ```
 
   - type: textarea
     id: screenshots
