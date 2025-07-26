@@ -63,8 +63,6 @@ dependencies {
 	include("com.squareup.okio:okio:3.9.0")
 }
 
-<<<<<<< Updated upstream
-=======
 compileKotlin {
 	kotlinOptions {
 		allWarningsAsErrors = false
@@ -84,7 +82,6 @@ gradle.beforeProject { project ->
 	project.ext.set('org.gradle.deprecation.trace', false)
 }
 
->>>>>>> Stashed changes
 processResources {
 	inputs.property "version", project.version
 
