@@ -1,6 +1,7 @@
 package cqseur.dailyrewards.ui
 
-import cqseur.dailyrewards.config.DailyRewardsConfig
+import cqseur.dailyrewards.config.ConfigManager
+import cqseur.dailyrewards.utils.MessageUtils
 import cqseur.dailyrewards.RewardOffer
 import cqseur.dailyrewards.ModSoundEvents
 import cqseur.dailyrewards.RewardClaimer
@@ -67,8 +68,8 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
         super.render(context, mouseX, mouseY, delta)
         this.renderBackground(context, mouseX, mouseY, delta)
 
-        if (DailyRewardsConfig.showOverlay) {
-            val alpha = (DailyRewardsConfig.overlayOpacityPercent.coerceIn(0,100) * 255 / 100) shl 24
+        if (ConfigManager.config.showOverlay) {
+            val alpha = (ConfigManager.config.overlayOpacityPercent.coerceIn(0,100) * 255 / 100) shl 24
             context.fill(0, 0, width, height, alpha)
         }
 
@@ -90,7 +91,7 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
             val hovered = mouseX in x..(x + cardWidth) && mouseY in y..(y + cardHeight)
             if (hovered && !revealed[idx] && !flipping[idx]) {
                 MinecraftClient.getInstance().soundManager.play(PositionedSoundInstance.master(ModSoundEvents.HOVER, 1f))
-                if (!DailyRewardsConfig.flipAnimation) {
+                if (!ConfigManager.config.flipAnimation) {
                     revealed[idx] = true
                     flipProgress[idx] = 1f
                     playRaritySound(card.rarity)
@@ -99,7 +100,7 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
                 }
             }
             if (flipping[idx]) {
-                flipProgress[idx] += delta * DailyRewardsConfig.flipSpeed 
+                flipProgress[idx] += delta * ConfigManager.config.flipSpeed 
                 if (flipProgress[idx] >= 1f) {
                     flipProgress[idx] = 1f
                     flipping[idx] = false
@@ -262,7 +263,7 @@ class RewardScreen(private val offer: RewardOffer) : Screen(Text.literal("Daily 
                 val mc = MinecraftClient.getInstance()
                 val card = offer.cards[idx]
                 val rarityFormat = rarityToFormat(card.rarity)
-                val msg: MutableText = Text.literal(DailyRewardsConfig.PREFIX)
+                val msg: MutableText = MessageUtils.PREFIX()
                     .formatted(Formatting.WHITE)
                     .append(Text.literal("Claiming reward #${idx + 1}: ").formatted(Formatting.RESET))
                     .append(Text.literal("${card.rarity.uppercase()} ").formatted(rarityFormat, Formatting.BOLD))

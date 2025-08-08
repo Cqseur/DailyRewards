@@ -1,4 +1,4 @@
-name: Github Automated Release
+name: Automatic Release
 
 on:
   workflow_run:
@@ -43,6 +43,9 @@ jobs:
           path: artifacts
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Remove sources.jar
+        run: find artifacts -name "*-sources.jar" -delete
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         env:
@@ -70,4 +73,4 @@ jobs:
           prerelease: false
           draft: false  
           files: |
-            artifacts/**/dailyrewards-*.jar
+            artifacts/**/dailyrewards-*-for-*.jar

@@ -9,9 +9,13 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.slf4j.LoggerFactory
 import net.minecraft.client.MinecraftClient
 import net.minecraft.text.Text
+import net.minecraft.util.Formatting
+import net.minecraft.text.ClickEvent
+import java.net.URI
 
 import cqseur.dailyrewards.RewardFetcher
-import cqseur.dailyrewards.config.DailyRewardsConfig
+import cqseur.dailyrewards.utils.MessageUtils
+import cqseur.dailyrewards.utils.manager.DailyClaimManager
 
 object RewardClaimer {
     private val logger = LoggerFactory.getLogger("[DailyRewards-Client]")
@@ -22,9 +26,13 @@ object RewardClaimer {
         val cookieHeader = RewardFetcher.cookies.joinToString("; ")
         if (token.isNullOrEmpty() || cookieHeader.isEmpty()) {
             MinecraftClient.getInstance().execute {
-                MinecraftClient.getInstance().player?.sendMessage(
-                    Text.literal(DailyRewardsConfig.PREFIX + "§cCannot claim, missing token/cookies"), false
-                )
+                MessageUtils.sendError("Cannot claim, missing token/cookies")
+                val githubMessage = MessageUtils.PREFIX()
+                    .append(Text.literal("If the error persist, create an issue on the "))
+                    .append(Text.literal("[GitHub]")
+                        .formatted(Formatting.DARK_AQUA, Formatting.BOLD, Formatting.UNDERLINE)
+                        .styled { it.withClickEvent(ClickEvent.OpenUrl(URI("https://github.com/Cqseur/DailyRewards/issues"))) })
+                MinecraftClient.getInstance().player?.sendMessage(githubMessage, false)
             }
             logger.warn("Missing token or cookies, cannot claim reward")
             return
@@ -47,12 +55,17 @@ object RewardClaimer {
                     logger.warn("Claim response body: $respBody")
                     if (resp.isSuccessful) {
                         logger.info("Claim successful for option $option id $id code ${resp.code}")
+                        DailyClaimManager.recordClaim()
                     } else {
                         logger.warn("Claim failed code ${resp.code}")
                         MinecraftClient.getInstance().execute {
-                            MinecraftClient.getInstance().player?.sendMessage(
-                                Text.literal(DailyRewardsConfig.PREFIX + "§cClaim failed (${resp.code})"), false
-                            )
+                            MessageUtils.sendError("Claim failed (${resp.code})")
+                            val githubMessage = MessageUtils.PREFIX()
+                                .append(Text.literal("If the error persist, create an issue on the "))
+                                .append(Text.literal("[GitHub]")
+                                    .formatted(Formatting.DARK_AQUA, Formatting.BOLD, Formatting.UNDERLINE)
+                                    .styled { it.withClickEvent(ClickEvent.OpenUrl(URI("https://github.com/Cqseur/DailyRewards/issues"))) })
+                            MinecraftClient.getInstance().player?.sendMessage(githubMessage, false)
                         }
                     }
                 }

@@ -1,6 +1,6 @@
 package cqseur.dailyrewards.ui
 
-import cqseur.dailyrewards.config.DailyRewardsConfig
+import cqseur.dailyrewards.config.ConfigManager
 import me.shedaniel.clothconfig2.api.ConfigBuilder
 import me.shedaniel.clothconfig2.api.ConfigCategory
 import net.minecraft.client.gui.screen.Screen
@@ -9,23 +9,39 @@ import net.minecraft.client.MinecraftClient
 
 object DailyRewardsConfigScreen {
     fun create(parent: Screen?): Screen {
-        val builder: ConfigBuilder = ConfigBuilder.create()
+        val builder: ConfigBuilder = ConfigBuilder.create().setTitle(Text.literal("DailyRewards"))
             .setParentScreen(parent)
-            .setTitle(Text.literal("DailyRewards Settings"))
+            builder.setGlobalized(true)
+            builder.setGlobalizedExpanded(false)
 
         val eb = builder.entryBuilder()
-        val general: ConfigCategory = builder.getOrCreateCategory(Text.literal("General"))
 
-        general.addEntry(
-            eb.startBooleanToggle(Text.literal("Card flip animation"), DailyRewardsConfig.flipAnimation)
-                .setSaveConsumer { DailyRewardsConfig.flipAnimation = it }
+        val generalSettings = builder.getOrCreateCategory(Text.literal("Settings"))
+        
+        generalSettings.addEntry(
+            eb.startBooleanToggle(Text.literal("Enable Daily Rewards"), ConfigManager.config.modEnabled)
+                .setSaveConsumer { ConfigManager.config.modEnabled = it }
                 .build()
         )
 
-        general.addEntry(
-            eb.startFloatField(Text.literal("Flip speed"), DailyRewardsConfig.flipSpeed)
-                .setMin(0.5f).setMax(4.0f)
-                .setSaveConsumer { DailyRewardsConfig.flipSpeed = it }
+        generalSettings.addEntry(
+            eb.startBooleanToggle(Text.literal("Daily Reminder"), ConfigManager.config.dailyReminder)
+                .setTooltip(Text.literal("Are you assisted and need a reminder ? Great ! Me too so there it is !"))
+                .setSaveConsumer { ConfigManager.config.dailyReminder = it }
+                .build()
+        )
+
+        val cardSettings = builder.getOrCreateCategory(Text.literal("Card Settings"))
+        cardSettings.addEntry(
+            eb.startBooleanToggle(Text.literal("Card flip animation"), ConfigManager.config.flipAnimation)
+                .setSaveConsumer { ConfigManager.config.flipAnimation = it }
+                .build()
+        )
+
+        cardSettings.addEntry(
+            eb.startFloatField(Text.literal("Flip speed"), ConfigManager.config.flipSpeed)
+                .setMin(0.1f).setMax(3.0f)
+                .setSaveConsumer { ConfigManager.config.flipSpeed = it }
                 .build()
         )
 
@@ -34,23 +50,18 @@ object DailyRewardsConfigScreen {
         if (currentUuidRaw == devUuidRaw) {
             val dev: ConfigCategory = builder.getOrCreateCategory(Text.literal("Developer"))
             dev.addEntry(
-                eb.startBooleanToggle(Text.literal("Debug mode"), DailyRewardsConfig.debugMode)
-                    .setSaveConsumer { DailyRewardsConfig.debugMode = it }
+                eb.startBooleanToggle(Text.literal("Show overlay"), ConfigManager.config.showOverlay)
+                    .setSaveConsumer { ConfigManager.config.showOverlay = it }
                     .build()
             )
             dev.addEntry(
-                eb.startBooleanToggle(Text.literal("Show overlay"), DailyRewardsConfig.showOverlay)
-                    .setSaveConsumer { DailyRewardsConfig.showOverlay = it }
-                    .build()
-            )
-            dev.addEntry(
-                eb.startIntSlider(Text.literal("Overlay opacity (%)"), DailyRewardsConfig.overlayOpacityPercent, 0, 100)
-                    .setSaveConsumer { DailyRewardsConfig.overlayOpacityPercent = it }
+                eb.startIntSlider(Text.literal("Overlay opacity (%)"), ConfigManager.config.overlayOpacityPercent, 0, 100)
+                    .setSaveConsumer { ConfigManager.config.overlayOpacityPercent = it }
                     .build()
             )
         }
 
-        builder.setSavingRunnable { DailyRewardsConfig.save() }
+        builder.setSavingRunnable { ConfigManager.saveConfig() }
         return builder.build()
     }
 }

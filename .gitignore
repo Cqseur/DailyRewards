@@ -9,6 +9,10 @@ classes/
 
 *.launch
 
+# project
+
+abandoned_idea/
+
 # idea
 
 .env

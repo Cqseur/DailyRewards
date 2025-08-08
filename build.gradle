@@ -274,7 +274,7 @@ def incrementVersion(String type) {
     def filteredLines = lines.findAll { line ->
         def trimmed = line.trim()
         return !trimmed.startsWith('# Mis à jour par la tâche') && 
-               !trimmed.matches(/# [a-z]+ \d+ [a-z]+ \d+ à \d+:\d+/)
+               !trimmed.matches(/# [a-zA-Zàâäéèêëïîôöùûüÿç]+ \d+ [a-zA-Zàâäéèêëïîôöùûüÿç]+ \d+ à \d+:\d+/)
     }
     
     for (int i = 0; i < filteredLines.size(); i++) {

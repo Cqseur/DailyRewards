@@ -3,10 +3,10 @@
 <div align="center">
 
 [![GitHub Release](https://img.shields.io/github/v/release/Cqseur/DailyRewards?style=for-the-badge&logo=github&color=181717)](https://github.com/Cqseur/DailyRewards/releases)
-[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.5-green?style=for-the-badge&logo=minecraft)](https://minecraft.net)
+[![Minecraft Version](https://img.shields.io/modrinth/game-versions/hypixel-dailyrewards?label=Minecraft&style=for-the-badge&logo=minecraft&color=00AF5C)](https://minecraft.net)
 [![Modrinth Downloads](https://img.shields.io/modrinth/dt/hypixel-dailyrewards?style=for-the-badge&logo=modrinth&color=00AF5C)](https://modrinth.com/mod/hypixel-dailyrewards)
 [![GitHub Issues](https://img.shields.io/github/issues/Cqseur/DailyRewards?style=for-the-badge&color=red)](https://github.com/Cqseur/DailyRewards/issues)
-[![License](https://img.shields.io/badge/License-LGPL--3.0-blue?style=for-the-badge)](https://github.com/Cqseur/DailyRewards/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/License-LGPL--3.0-blue?style=for-the-badge&color=FF0000)](https://github.com/Cqseur/DailyRewards/blob/main/LICENSE)
 
 **🎁 Automate Hypixel Skyblock daily rewards with beautiful card animations and instant claim notifications**
 
@@ -293,9 +293,9 @@ This project is licensed under the **LGPL-3.0-only License** - see the [LICENSE]
 ### 🌟 **Support the Project!**
 
 [![Modrinth Downloads](https://img.shields.io/modrinth/dt/hypixel-dailyrewards?logo=modrinth&style=for-the-badge&color=00AF5C)](https://modrinth.com/mod/hypixel-dailyrewards)
-[![GitHub Stars](https://img.shields.io/github/stars/Cqseur/DailyRewards?style=for-the-badge&color=yellow)](https://github.com/Cqseur/DailyRewards/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/Cqseur/DailyRewards?style=for-the-badge&color=blue)](https://github.com/Cqseur/DailyRewards/network/members)
-[![GitHub Issues](https://img.shields.io/github/issues/Cqseur/DailyRewards?style=for-the-badge&color=red)](https://github.com/Cqseur/DailyRewards/issues)
+[![GitHub Stars](https://img.shields.io/github/stars/Cqseur/DailyRewards?&label=Star%20the%20project%20💛&style=for-the-badge&color=yellow&logo=github)](https://github.com/Cqseur/DailyRewards/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/Cqseur/DailyRewards?style=for-the-badge&color=blue&logo=github)](https://github.com/Cqseur/DailyRewards/network/members)
+[![GitHub Issues](https://img.shields.io/github/issues/Cqseur/DailyRewards?style=for-the-badge&color=ff0000&logo=github)](https://github.com/Cqseur/DailyRewards/issues)
 
 **Made with ❤️ for the Hypixel community**
 
@@ -304,7 +304,7 @@ This project is licensed under the **LGPL-3.0-only License** - see the [LICENSE]
 ---
 
 **📊 Project Statistics:**
-- **Version:** `1.21.5+v1.0.1`
+- **Version:** `1.21.5+v1.0.4`
 - **License:** `LGPL-3.0-only` 
 - **Target:** `Minecraft 1.21.5`
 - **Framework:** `Fabric`
