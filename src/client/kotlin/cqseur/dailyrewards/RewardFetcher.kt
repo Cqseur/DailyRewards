@@ -104,7 +104,7 @@ object RewardFetcher {
                     }
                     val jsonStr = match.groupValues[1].replace("\\'", "'")
                     val jsonElement = try {
-                        Json { ignoreUnknownKeys = true; isLenient = true; allowTrailingComma = true }
+                        Json { ignoreUnknownKeys = true; isLenient = true }
                             .parseToJsonElement(jsonStr)
                     } catch (e: Exception) {
                         logger.warn("Failed to parse appData json", e)
@@ -120,7 +120,7 @@ object RewardFetcher {
                             i18nStr = i18nStr.replace("\\'", "'")
                             i18nStr = i18nStr.replace("'", "\\u0027")
                         try {
-                            Json { ignoreUnknownKeys = true; isLenient = true; allowTrailingComma = true }
+                            Json { ignoreUnknownKeys = true; isLenient = true }
                                 .parseToJsonElement(i18nStr).jsonObject
                         } catch (e: Exception) {
                             logger.warn("Failed to parse i18n json", e)

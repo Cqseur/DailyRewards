@@ -97,7 +97,7 @@ body:
     attributes:
       label: "🔧 Fabric Loader Version"
       description: "What version of Fabric Loader are you using? Check in your **launcher settings** (https://imgur.com/a/7v1wCoK)"
-      placeholder: "Example: 0.16.14"
+      placeholder: "Example: 0.16.14 | If you're using a Modded Minecraft Write instead its name Exemple : Badlion Client"
     validations:
       required: true
 
@@ -175,6 +175,7 @@ body:
         - label: "I have tried restarting Minecraft"
         - label: "I have tried with only DailyRewards installed (no other mods)"
         - label: "I have searched for existing issues and this is not a duplicate"
+          required: true
 
   - type: markdown
     attributes:
