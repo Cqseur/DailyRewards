@@ -71,7 +71,6 @@ object MessageUtils {
         )
     }
 
-    @Deprecated("Remove this bullshit and use sendMessage instead")
     fun sendInfo(message: String) {
         val player = MinecraftClient.getInstance().player
         val fullMessage = PREFIX().append(Text.literal(message))

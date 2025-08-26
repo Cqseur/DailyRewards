@@ -11,7 +11,6 @@ import kotlinx.serialization.json.*
 import net.minecraft.client.MinecraftClient
 import net.minecraft.text.Text
 
-
 data class RewardCard(
     val name: String,
     val amount: String,
@@ -35,6 +34,7 @@ object RewardFetcher {
     var cookies: List<String> = emptyList()
     var activeAd: Int = 0
     var currentStreak: Int = 0
+    var currentBarStep: Int = 0
     var highestStreak: Int = 0
     private val client = OkHttpClient()
 
@@ -134,8 +134,9 @@ object RewardFetcher {
                     activeAd = json["activeAd"]?.jsonPrimitive?.int ?: 0
 
                     json["dailyStreak"]?.jsonObject?.let { ds ->
-                        currentStreak = ds["value"]?.jsonPrimitive?.int ?: 0
+                        currentStreak = ds["score"]?.jsonPrimitive?.int ?: 0
                         highestStreak = ds["highScore"]?.jsonPrimitive?.int ?: 0
+                        currentBarStep = ds["value"]?.jsonPrimitive?.int ?: minOf(currentStreak, 8)
                     }
 
                     val rewardsArray = json["rewards"]?.jsonArray ?: run {

@@ -45,7 +45,7 @@ body:
   - type: textarea
     id: logs
     attributes:
-      label: "📄 Logs/Crash Reports"
+      label: "📄 Logs/Crash Reports | You can use https://mclo.gs/ to hide any sensitive informations."
       description: |
         Please provide relevant logs or crash reports. You can find them in:
         - `.minecraft/logs/latest.log`

@@ -54,11 +54,6 @@ object DailyRewardsConfigScreen {
                     .setSaveConsumer { ConfigManager.config.showOverlay = it }
                     .build()
             )
-            dev.addEntry(
-                eb.startIntSlider(Text.literal("Overlay opacity (%)"), ConfigManager.config.overlayOpacityPercent, 0, 100)
-                    .setSaveConsumer { ConfigManager.config.overlayOpacityPercent = it }
-                    .build()
-            )
         }
 
         builder.setSavingRunnable { ConfigManager.saveConfig() }

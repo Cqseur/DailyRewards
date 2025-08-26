@@ -28,12 +28,17 @@ jobs:
         id: get_version
         run: |
           VERSION=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2)
-          # Retirer le suffixe -for-1.21.5 pour le tag
-          CLEAN_VERSION=$(echo $VERSION | sed 's/-for-1\.21\.5//')
+          ARCHIVE=$(grep '^archives_base_name=' gradle.properties | cut -d'=' -f2)
+          CLEAN_VERSION=$(echo "$VERSION" | sed 's/-for-.*$//')
+          MC_VERSION=$(grep '^minecraft_version=' gradle.properties | cut -d'=' -f2)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "archive=$ARCHIVE" >> $GITHUB_OUTPUT
           echo "clean_version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
+          echo "mc_version=$MC_VERSION" >> $GITHUB_OUTPUT
           echo "Version complète: $VERSION"
+          echo "Archive base: $ARCHIVE"
           echo "Version clean: $CLEAN_VERSION"
+          echo "MC: $MC_VERSION"
 
       - name: Download build artifacts
         uses: dawidd6/action-download-artifact@v2
@@ -46,6 +51,23 @@ jobs:
       - name: Remove sources.jar
         run: find artifacts -name "*-sources.jar" -delete
 
+      - name: Rename JAR for GitHub Release asset
+        run: |
+          set -e
+          SRC="artifacts/${{ steps.get_version.outputs.archive }}-${{ steps.get_version.outputs.version }}.jar"
+          if [ ! -f "$SRC" ]; then
+            echo "Primary jar not found at $SRC; searching fallback…"
+            SRC=$(find artifacts -type f -name "*.jar" | head -n 1)
+          fi
+          DEST="artifacts/Dailyrewards-${{ steps.get_version.outputs.clean_version }}-for-1.21.5.jar"
+          echo "Renaming $SRC -> $DEST"
+          if [ "$SRC" = "$DEST" ]; then
+            echo "Already correctly named: $SRC"
+          else
+            mv "$SRC" "$DEST"
+          fi
+          ls -l artifacts
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         env:
@@ -56,7 +78,7 @@ jobs:
           body: |
             ## 🎁 DailyRewards v${{ steps.get_version.outputs.clean_version }}
             
-            **📥 Download:** `dailyrewards-${{ steps.get_version.outputs.version }}.jar`
+            **📥 Download:** `${{ steps.get_version.outputs.archive }}-${{ steps.get_version.outputs.version }}.jar`
             
             **🔧 Compatibility:**
             - Minecraft 1.21.5
@@ -73,4 +95,4 @@ jobs:
           prerelease: false
           draft: false  
           files: |
-            artifacts/**/dailyrewards-*-for-*.jar
+            artifacts/**/*.jar

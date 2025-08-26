@@ -111,11 +111,11 @@ java {
 }
 
 jar {
-	inputs.property "archivesName", project.base.archivesName
+    inputs.property "archivesName", project.base.archivesName
 
-	from("LICENSE") {
-		rename { "${it}_${inputs.properties.archivesName}"}
-	}
+    from("LICENSE") {
+        rename { "${it}_${inputs.properties.archivesName}"}
+    }
 }
 
 publishing {
@@ -145,6 +145,7 @@ def copyToClipboard = { File file ->
 }
 
 tasks.named('remapJar') {
+    archiveFileName.set("${project.archives_base_name}-${project.version}.jar")
     doLast {
         copyToClipboard(archiveFile.get().asFile)
     }
@@ -177,12 +178,13 @@ tasks.register('copyToMods') {
         if (libs) {
             def mainJar = libs.find { jar ->
                 def name = jar.name
-                def versionPattern = /.*\d+\.\d+\.\d+-for-.*\.jar$/
+                def versionPattern = /.*\d+\.\d+\.\d+(?:-for-.*)?\.jar$/
                 return name.matches(versionPattern) && 
                        !name.contains('-sources') && 
                        !name.contains('-dev') &&
                        !name.contains('-javadoc')
             }
+            
             def latestJar = mainJar ?: libs.max { it.lastModified() }
             
             def envFile = file('.env')
@@ -292,18 +294,18 @@ def incrementVersion(String type) {
     
     println "[i] Current version: ${currentVersion}"
     
-    // mod_version format must always follow this pattern <M>.<m>.<p>-for-<minecraft_version> Ex: 0.1.0-for-1.21.5 
-    def versionRegex = /(\d+)\.(\d+)\.(\d+)(-for-.+)/
+    // mod_version formats accepted: <M>.<m>.<p> or <M>.<m>.<p>-for-<minecraft_version> (e.g., <modname>-0.1.0 or <modname>-0.1.0-for-1.21.5)
+    def versionRegex = /(\d+)\.(\d+)\.(\d+)(-for-.+)?/
     def matcher = currentVersion =~ versionRegex
     
     if (!matcher.matches()) {
-        throw new RuntimeException("Version format not supported: ${currentVersion}. Expected format: <major>.<minor>.<patch>-for-<minecraft_version>")
+        throw new RuntimeException("Version format not supported: ${currentVersion}. Expected: <major>.<minor>.<patch>[ -for-<minecraft_version>]")
     }
     
     def major = matcher[0][1] as Integer
     def minor = matcher[0][2] as Integer  
     def patch = matcher[0][3] as Integer
-    def suffix = matcher[0][4]
+    def suffix = matcher[0].size() > 4 ? (matcher[0][4] ?: "") : ""
     
     switch (type) {
         case 'patch':

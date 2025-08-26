@@ -32,16 +32,9 @@ class DailyRewardsClient : ClientModInitializer {
     override fun onInitializeClient() {
         setInstance(this)
         
-        // Initialize configuration system
         ConfigManager.init()
-        
-        // Initialize sound events
         ModSoundEvents.init()
-        
-        // Initialize daily reminder system
         DailyReminder.init()
-        
-        // Initialize all commands
         CommandRegistry.registerAll()
 
         ClientTickEvents.END_CLIENT_TICK.register { client ->

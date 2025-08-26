@@ -3,7 +3,7 @@
 	"id": "dailyrewards",
 	"version": "${version}",
 	"name": "DailyRewards",
-	"description": "Fabric 1.21.5 port and improvement of the DailyRewards mod that lets you claim Hypixel daily rewards completely in game.",
+	"description": "DailyRewards allow you to claim your Hypixel daily rewards in game.",
 	"authors": [
 		"10YearCookieBuff/Cqseur_r"
 	],
@@ -11,7 +11,7 @@
 		"homepage": "https://modrinth.com/mod/hypixel-dailyrewards/",
 		"sources": "https://github.com/Cqseur/DailyRewards"
 	},
-	"license": "LGPL-3.0 AND Hypixel's Fan Content Policy",
+	"license": "LGPL-3.0",
 	"icon": "assets/dailyrewards/textures/icon.png",
 	"environment": "*",
 	"entrypoints": {

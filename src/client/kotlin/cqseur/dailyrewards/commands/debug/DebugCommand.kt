@@ -5,10 +5,12 @@ import cqseur.dailyrewards.utils.MessageUtils
 import cqseur.dailyrewards.RewardCard
 import cqseur.dailyrewards.RewardOffer
 import cqseur.dailyrewards.DailyRewardsClient
+import cqseur.dailyrewards.RewardFetcher
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource
 import com.mojang.brigadier.CommandDispatcher
+import com.mojang.brigadier.arguments.IntegerArgumentType
 import net.minecraft.client.MinecraftClient
 import org.slf4j.LoggerFactory
 import kotlin.random.Random
@@ -27,6 +29,7 @@ object DebugCommand {
     private fun registerDebugCommands(dispatcher: CommandDispatcher<FabricClientCommandSource>) {
         dispatcher.register(
             ClientCommandManager.literal("dailyrewards-debug")
+                .requires { hasDeveloperAccess() }
                 .then(ClientCommandManager.literal("timezone")
                     .executes { context ->
                         showTimezoneDebug()
@@ -49,9 +52,18 @@ object DebugCommand {
         
         dispatcher.register(
             ClientCommandManager.literal("debugcards")
+                .requires { hasDeveloperAccess() }
                 .executes {
                     generateDebugCards()
                 }
+                .then(ClientCommandManager.literal("streak")
+                    .then(ClientCommandManager.argument("value", IntegerArgumentType.integer(0))
+                        .executes { context ->
+                            val streakValue = IntegerArgumentType.getInteger(context, "value")
+                            generateDebugCardsWithStreak(streakValue)
+                        }
+                    )
+                )
         )
     }
     
@@ -101,27 +113,47 @@ object DebugCommand {
             }
         }
     }
-    
+
     private fun checkDeveloperAccess(): Boolean {
         val mc = MinecraftClient.getInstance()
         val currentUuidRaw = mc.player?.uuid?.toString()?.replace("-", "") ?: ""
-        
-        if (currentUuidRaw != DEV_UUID_RAW) {
+        if (!hasDeveloperAccess()) {
             MessageUtils.sendError("🚫 You are not allowed to use debug commands.")
             logger.warn("Unauthorized debug attempt from UUID: $currentUuidRaw")
             return false
         }
-        
         return true
     }
-    
-    /**
-     * Generate debug reward cards for testing
-     **/
+
+    private fun hasDeveloperAccess(): Boolean {
+        val mc = MinecraftClient.getInstance()
+        val currentUuidRaw = mc.player?.uuid?.toString()?.replace("-", "") ?: ""
+        return currentUuidRaw == DEV_UUID_RAW
+    }
+
     private fun generateDebugCards(): Int {
+        return generateDebugCardsWithStreak(null)
+    }
+
+    private fun generateDebugCardsWithStreak(customStreak: Int?): Int {
         if (!checkDeveloperAccess()) return 0
         
-        logger.info("Generating debug cards for developer")
+        val originalStreak = RewardFetcher.currentStreak
+        val originalHighest = RewardFetcher.highestStreak
+        
+        if (customStreak != null) {
+            RewardFetcher.currentStreak = customStreak
+            RewardFetcher.currentBarStep = when {
+                customStreak <= 8 -> customStreak
+                else -> 8
+            }
+            if (customStreak > RewardFetcher.highestStreak) {
+                RewardFetcher.highestStreak = customStreak
+            }
+            logger.info("Debug cards with custom streak: $customStreak (was $originalStreak), score=${RewardFetcher.currentBarStep}")
+        } else {
+            logger.info("Generating debug cards with current streak: $originalStreak")
+        }
         
         val commonOptions = listOf(
             Pair("Tung Tung Coins", "coins") to 1000..10000,
@@ -159,8 +191,14 @@ object DebugCommand {
         
         DailyRewardsClient.setPendingOffer(offer)
         
-        MessageUtils.sendSuccess("🎁 Debug reward cards generated! Screen will open shortly.")
-        logger.info("Debug cards generated successfully: ${cards.size} cards")
+        val streakInfo = if (customStreak != null) {
+            " (Streak: $customStreak)"
+        } else {
+            " (Current streak: ${RewardFetcher.currentStreak})"
+        }
+        
+        MessageUtils.sendSuccess("🎁 Debug reward cards generated$streakInfo! Screen will open shortly.")
+        logger.info("Debug cards generated successfully: ${cards.size} cards with streak: ${RewardFetcher.currentStreak}")
         
         return 1
     }

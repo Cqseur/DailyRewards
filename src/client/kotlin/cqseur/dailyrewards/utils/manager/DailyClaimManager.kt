@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 import java.time.*
 import java.time.format.DateTimeFormatter
 
-// Wallahi this is the worst code ever
+// Wallahi this is the worst code ever (wait until u see RewardScreen)
 
 /**
  * Manages daily claim logic with automatic timezone conversion
@@ -38,13 +38,9 @@ object DailyClaimManager {
         return canClaim
     }
     
-    /**
-     * Get the current claim date based on Hypixel's EST timezone and midnight reset time
-     * @return date string in format "yyyy-MM-dd"
-     **/
     private fun getCurrentClaimDate(): String {
         val now = ZonedDateTime.now(HYPIXEL_TIMEZONE)
-        val resetHour = 0 // Midnight EST reset
+        val resetHour = 0
         
         val claimDate = if (now.hour < resetHour) {
             now.minusDays(1).toLocalDate()
@@ -84,7 +80,7 @@ object DailyClaimManager {
         val minutes = duration.minusHours(hours).toMinutes()
         val seconds = duration.minusHours(hours).minusMinutes(minutes).toSeconds()
         
-        if (hours > 1) {
+        if (hours >= 1) {
             return "${hours}h ${minutes}m ${seconds}s" 
         } else {
             return "${minutes} minutes ${seconds} seconds"
