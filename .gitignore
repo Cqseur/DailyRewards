@@ -10,7 +10,6 @@ classes/
 *.launch
 
 # project
-
 abandoned_idea/
 changelog
 
@@ -25,6 +24,7 @@ changelog
 # vscode
 
 .settings/
+.kotlin/
 .vscode/
 bin/
 .classpath

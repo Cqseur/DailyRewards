@@ -1,234 +1,241 @@
+// Root build.gradle - Configuration multi-modules
 plugins {
-	id 'fabric-loom' version "${loom_version}"
+	id 'fabric-loom' version "${loom_version}" apply false
+	id "org.jetbrains.kotlin.jvm" version "2.1.21" apply false
+	id 'com.modrinth.minotaur' version '2.+' apply false
 	id 'maven-publish'
-	id "org.jetbrains.kotlin.jvm" version "2.1.21"
 }
 
-version = project.mod_version
-group = project.maven_group
+// Mapping module name -> Minecraft game versions supported by that module
+def moduleGameVersions = [
+	'1-21-3' : ['1.21.3'],
+	'1-21-4' : ['1.21.4'],
+	'1-21-5' : ['1.21.5'],
+	'1-21-6' : ['1.21.6', '1.21.7', '1.21.8'],
+	'1-21-10': ['1.21.9', '1.21.10'],
+	'1-21-11': ['1.21.11'],
+]
 
-base {
-	archivesName = project.archives_base_name
-}
+def changelogFile = new File(rootDir, 'changelog')
+def changelogContent = changelogFile.exists() ? changelogFile.text : 'No changelog provided.'
 
-repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
-    maven { url 'https://maven.shedaniel.me/' }
-    maven { url 'https://maven.terraformersmc.com/' }
-}
-
-loom {
-	splitEnvironmentSourceSets()
-
-	mods {
-		"dailyrewards" {
-			sourceSet sourceSets.main
-			sourceSet sourceSets.client
-		}
-	}
-
-}
-
-dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
-
-	//ModMenu
-	modCompileOnly("com.terraformersmc:modmenu:9.0.0")
-
-	//Cloth Config
-	modImplementation("me.shedaniel.cloth:cloth-config-fabric:18.0.145")
-	include("me.shedaniel.cloth:cloth-config-fabric:18.0.145")
-
-	//OkHttp
-	modImplementation("com.squareup.okhttp3:okhttp:4.12.0")
-	include("com.squareup.okhttp3:okhttp:4.12.0")
-
-	//Jsoup
-	modImplementation("org.jsoup:jsoup:1.17.2")
-	include("org.jsoup:jsoup:1.17.2")
-
-	//Okio
-	modImplementation("com.squareup.okio:okio:3.9.0")
-	include("com.squareup.okio:okio:3.9.0")
-}
-
-compileKotlin {
-	kotlinOptions {
-		allWarningsAsErrors = false
-		suppressWarnings = true
-	}
-}
-
-tasks.withType(org.gradle.api.tasks.compile.JavaCompile).configureEach {
-	options.compilerArgs += ['-Xlint:none']
-}
-
-tasks.withType(org.gradle.api.tasks.compile.AbstractCompile).configureEach {
-	options.warnings = false
-}
-
-gradle.beforeProject { project ->
-	project.ext.set('org.gradle.deprecation.trace', false)
-}
-
-processResources {
-	inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
-	}
-}
-
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-	kotlinOptions {
-		jvmTarget = 21
-	}
-}
-
-java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
-}
-
-jar {
-    inputs.property "archivesName", project.base.archivesName
-
-    from("LICENSE") {
-        rename { "${it}_${inputs.properties.archivesName}"}
-    }
-}
-
-publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			artifactId = project.archives_base_name
-			from components.java
-		}
-	}
-
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+subprojects {
+	apply plugin: 'fabric-loom'
+	apply plugin: 'org.jetbrains.kotlin.jvm'
+	apply plugin: 'maven-publish'
+	apply plugin: 'com.modrinth.minotaur'
+	
+	group = rootProject.properties.maven_group
+	version = rootProject.properties.mod_version
+	
 	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
+		maven { url = 'https://maven.shedaniel.me/' }
+		maven { url = 'https://maven.terraformersmc.com/' }
 	}
+	
+	tasks.withType(org.gradle.api.tasks.compile.AbstractCompile).configureEach {
+		options.warnings = false
+	}
+	
+	gradle.beforeProject { proj ->
+		proj.ext.set('org.gradle.deprecation.trace', false)
+	}
+	
+	java {
+		sourceCompatibility = JavaVersion.VERSION_21
+		targetCompatibility = JavaVersion.VERSION_21
+	}
+	
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				artifactId = project.base.archivesName.get()
+				from components.java
+			}
+		}
+	}
+
+	modrinth {
+		token = System.getenv('MODRINTH_TOKEN')
+		projectId = 'AoDOmdGD'
+		versionNumber = rootProject.properties.mod_version
+		versionName = "DailyRewards ${rootProject.properties.mod_version}"
+		versionType = 'release'
+		uploadFile = remapJar
+		changelog = changelogContent
+			.replace('{mod_version}', rootProject.properties.mod_version)
+			.replace('{mc_version}', project.minecraft_version)
+			.replace('{loader_version}', rootProject.properties.loader_version)
+		gameVersions = moduleGameVersions.getOrDefault(project.name, [])
+		loaders = ['fabric']
+		debugMode = rootProject.hasProperty('dry')
+
+		dependencies {
+			required.project 'fabric-api'
+			required.project 'fabric-language-kotlin'
+		}
+	}
+}
+
+def DateFormatted = { new java.text.SimpleDateFormat("HH:mm:ss")
+            .format(new Date()) 
 }
 
 def copyToClipboard = { File file ->
     if (System.getProperty('os.name').toLowerCase().contains('windows')) {
-        exec {
+        providers.exec {
             commandLine 'powershell', '-NoProfile', '-Command',
                         "Set-Clipboard -Path '${file.absolutePath}'"
-        }
+        }.result.get()
     }
 }
 
-tasks.named('remapJar') {
-    archiveFileName.set("${project.archives_base_name}-${project.version}.jar")
-    doLast {
-        copyToClipboard(archiveFile.get().asFile)
-    }
+tasks.register('buildAll') {
+	dependsOn '1-21-3:build', '1-21-4:build', '1-21-5:build', '1-21-6:build', '1-21-10:build', '1-21-11:build'
+	group = 'build'
+	description = 'Build tous les modules (1.21.3, 1.21.4, 1.21.5, 1.21.6, 1.21.10 et 1.21.11)'
 }
 
-tasks.named('build') {
-    finalizedBy('copyLatestJar')
+tasks.register('buildAndCopyAllToMods') {
+	dependsOn '1-21-3:build', '1-21-4:build', '1-21-5:build', '1-21-6:build', '1-21-10:build', '1-21-11:build'
+	finalizedBy 'copyToMods'
+	group = 'build'
+	description = 'Build All mods then copy them to mods folder'
 }
-tasks.register('copyLatestJar') {
-    doLast {
-        def libs = file("$buildDir/libs").listFiles().findAll { it.name.endsWith('.jar') && !it.name.contains('-dev') }
-        if (libs) {
-            copyToClipboard(libs.max { it.lastModified() })
-        }
-    }
+
+tasks.register('publishToModrinth') {
+	dependsOn '1-21-3:modrinth', '1-21-4:modrinth', '1-21-5:modrinth', '1-21-6:modrinth', '1-21-10:modrinth', '1-21-11:modrinth'
+	group = 'publishing'
+	description = 'Build and publish all modules to Modrinth'
+}
+
+tasks.register('debugChangelog') {
+	group = 'help'
+	description = 'Generate resolved changelog previews in a temp folder'
+
+	def modVersion = rootProject.properties.mod_version
+	def loaderVer = rootProject.properties.loader_version
+	def rawContent = changelogContent
+	def moduleVersions = [:]
+	subprojects.findAll { it.name != 'common' }.each { subproj ->
+		moduleVersions[subproj.name] = subproj.properties.minecraft_version ?: subproj.name.replace('-', '.')
+	}
+
+	doLast {
+		def tempDir = new File(System.getProperty('java.io.tmpdir'), 'dailyrewards-changelog-preview')
+		if (tempDir.exists()) tempDir.deleteDir()
+		tempDir.mkdirs()
+
+		moduleVersions.each { moduleName, mcVersion ->
+			def resolved = rawContent
+				.replace('{mod_version}', modVersion)
+				.replace('{mc_version}', mcVersion)
+				.replace('{loader_version}', loaderVer)
+
+			def outFile = new File(tempDir, "changelog-${moduleName}.md")
+			outFile.text = resolved
+			println "[>] Generated: ${outFile.absolutePath}"
+		}
+
+		println "\n[OK] Changelog previews saved to: ${tempDir.absolutePath}"
+	}
 }
 
 tasks.register('copyToMods') {
-    dependsOn 'remapJar'
-    mustRunAfter 'build', 'remapJar', 'jar'
-    
-    doLast {
-        def libs = file("$buildDir/libs").listFiles().findAll { 
-            it.name.endsWith('.jar') && 
-            !it.name.contains('-dev') && 
-            !it.name.contains('-sources') && 
-            !it.name.contains('-javadoc') &&
-            !it.name.contains('-shadow')
-        }
-        if (libs) {
-            def mainJar = libs.find { jar ->
-                def name = jar.name
-                def versionPattern = /.*\d+\.\d+\.\d+(?:-for-.*)?\.jar$/
-                return name.matches(versionPattern) && 
-                       !name.contains('-sources') && 
-                       !name.contains('-dev') &&
-                       !name.contains('-javadoc')
-            }
-            
-            def latestJar = mainJar ?: libs.max { it.lastModified() }
-            
-            def envFile = file('.env')
-            def envVars = [:]
-            if (envFile.exists()) {
-                envFile.readLines().each { line ->
-                    if (line.contains('=') && !line.startsWith('#')) {
-                        def parts = line.split('=', 2)
-                        envVars[parts[0].trim()] = parts[1].trim()
-                    }
-                }
-            }
-            
-            // Be sure to create a .env file in the root directory of the project and fill it with the following variables:
-            // GameModPath: path to the mods folder of your game
-            // GameModPath2: this one should be useless for you since i made it to have 2 seperate game environment with specific mods 
-            def modsPaths = []
-            if (envVars.GameModPath) modsPaths.add(envVars.GameModPath)
-            if (envVars.GameModPath2) modsPaths.add(envVars.GameModPath2)
-            
-            modsPaths.each { pathStr ->
-                def modsDir = file(pathStr)
-                
-                if (!modsDir.exists()) {
-                    modsDir.mkdirs()
-                    println "Created directory: ${modsDir.absolutePath}"
-                }
-                
-                modsDir.listFiles().each { oldMod ->
-                    if (oldMod.name.startsWith("${project.archives_base_name}-") && oldMod.name.endsWith('.jar')) {
-                        oldMod.delete()
-                        println "Removed old mod: ${oldMod.name} from ${modsDir.name}"
-                    }
-                }
-                
-                def targetFile = new File(modsDir, latestJar.name)
-                copy {
-                    from latestJar
-                    into modsDir
-                }
-                println "[Success] Mod copied to: ${targetFile.absolutePath}"
-            }
-        }
-    }
+	mustRunAfter '1-21-3:build', '1-21-4:build', '1-21-5:build', '1-21-6:build', '1-21-10:build', '1-21-11:build'
+	group = 'build'
+	description = 'Smart task to copy recently builded mod to mods folder only'
+
+	// Resolve all project-relative paths at configuration time (configuration cache safe)
+	def envFile = new File(rootDir, '.env')
+	def subprojectLibsDirs = [:]
+	subprojects.findAll { it.name != 'common' }.each { subproj ->
+		subprojectLibsDirs[subproj.name] = new File(subproj.layout.buildDirectory.asFile.getOrNull() ?: new File(subproj.projectDir, 'build'), 'libs')
+	}
+
+	doLast {
+		def envVars = [:]
+		if (envFile.exists()) {
+			envFile.readLines().each { line ->
+				if (line.contains('=') && !line.startsWith('#')) {
+					def parts = line.split('=', 2)
+					envVars[parts[0].trim()] = parts[1].trim()
+				}
+			}
+		}
+
+		def modsPaths = []
+		if (envVars.GameModPath) modsPaths.add(envVars.GameModPath)
+		if (envVars.GameModPath2) modsPaths.add(envVars.GameModPath2)
+
+		if (modsPaths.isEmpty()) {
+			println "[${DateFormatted()}] [!] No mods paths found in .env file!"
+			return
+		}
+
+		// Detect which modules have built JARs
+		def modulesToCopy = []
+		subprojectLibsDirs.each { moduleName, libsDir ->
+			if (libsDir.exists()) {
+				def jars = libsDir.listFiles()?.findAll {
+					it.name.endsWith('.jar') &&
+					!it.name.contains('-dev') &&
+					!it.name.contains('-sources')
+				}
+				if (jars && !jars.isEmpty()) {
+					modulesToCopy.add(moduleName)
+				}
+			}
+		}
+
+		if (modulesToCopy.isEmpty()) {
+			println "[${DateFormatted()}] [!] No modules to copy. Build a module first!"
+			println "Example: ./gradlew :1-21-4:build copyToMods"
+			return
+		}
+
+		println "[${DateFormatted()}] [>] Copying ${modulesToCopy.size()} module(s): ${modulesToCopy.join(', ')}"
+
+		def allJars = []
+		modulesToCopy.each { moduleName ->
+			def libsDir = subprojectLibsDirs[moduleName]
+			if (libsDir.exists()) {
+				def jars = libsDir.listFiles().findAll {
+					it.name.endsWith('.jar') &&
+					!it.name.contains('-dev') &&
+					!it.name.contains('-sources')
+				}
+				if (!jars.isEmpty()) {
+					def mostRecent = jars.max { it.lastModified() }
+					allJars.add(mostRecent)
+				}
+			}
+		}
+
+		modsPaths.each { pathStr ->
+			def modsDir = new File(pathStr)
+
+			if (!modsDir.exists()) {
+				modsDir.mkdirs()
+				println "[${DateFormatted()}] Created directory: ${modsDir.absolutePath}"
+			}
+
+			modsDir.listFiles()?.each { oldMod ->
+				if (oldMod.name.toLowerCase().contains('dailyrewards') && oldMod.name.endsWith('.jar')) {
+					oldMod.delete()
+					println "[${DateFormatted()}] Removed: ${oldMod.name} from ${modsDir.absolutePath}"
+				}
+			}
+
+			allJars.each { jar ->
+				def targetFile = new File(modsDir, jar.name)
+				java.nio.file.Files.copy(jar.toPath(), targetFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+				println "[${DateFormatted()}] Copied: ${jar.name} to ${targetFile.absolutePath}"
+			}
+		}
+
+		println "\n[${DateFormatted()}] [OK] ${modulesToCopy.size()} module(s) copied successfully: ${modulesToCopy.join(', ')}"
+	}
 }
 
 tasks.register('iP') {

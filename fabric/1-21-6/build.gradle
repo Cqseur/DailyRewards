@@ -1,0 +1,102 @@
+plugins {
+	id 'fabric-loom'
+	id "org.jetbrains.kotlin.jvm"
+}
+
+group = project.maven_group
+version = project.mod_version
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+    maven { url = 'https://maven.shedaniel.me/' }
+    maven { url = 'https://maven.terraformersmc.com/' }
+}
+
+loom {
+	splitEnvironmentSourceSets()
+
+	mods {
+		"dailyrewards" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	
+	// Fabric API
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
+	
+	// Dependencies 
+	modCompileOnly("com.terraformersmc:modmenu:9.0.0")
+	
+	modImplementation("me.shedaniel.cloth:cloth-config-fabric:19.0.147")
+	include("me.shedaniel.cloth:cloth-config-fabric:19.0.147")
+	
+	modImplementation("com.squareup.okhttp3:okhttp:4.12.0")
+	include("com.squareup.okhttp3:okhttp:4.12.0")
+	
+	modImplementation("org.jsoup:jsoup:1.17.2")
+	include("org.jsoup:jsoup:1.17.2")
+	
+	modImplementation("com.squareup.okio:okio:3.9.0")
+	include("com.squareup.okio:okio:3.9.0")
+}
+
+compileKotlin {
+	kotlinOptions {
+		allWarningsAsErrors = false
+		suppressWarnings = true
+	}
+}
+
+tasks.withType(org.gradle.api.tasks.compile.JavaCompile).configureEach {
+	options.compilerArgs += ['-Xlint:none']
+	it.options.release = 21
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+	kotlinOptions {
+		jvmTarget = 21
+	}
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+processResources {
+	def modVersion = project.version
+	def mcRange = ">=1.21.6 <=1.21.8"
+	inputs.property "version", modVersion
+	inputs.property "minecraft_version_range", mcRange
+
+	filesMatching("fabric.mod.json") {
+		expand(
+			"version": modVersion,
+			"minecraft_version_range": mcRange
+		)
+	}
+}
+
+jar {
+    def baseName = project.base.archivesName
+    inputs.property "archivesName", baseName
+    from("${rootProject.projectDir}/LICENSE") {
+        rename { "${it}_${baseName.get()}"}
+    }
+}
+
+remapJar {
+    archiveFileName.set("${project.archives_base_name}-${project.version}.jar")
+}
