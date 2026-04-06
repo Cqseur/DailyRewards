@@ -27,18 +27,11 @@ jobs:
       - name: Get version from gradle.properties
         id: get_version
         run: |
-          VERSION=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2)
-          ARCHIVE=$(grep '^archives_base_name=' gradle.properties | cut -d'=' -f2)
-          CLEAN_VERSION=$(echo "$VERSION" | sed 's/-for-.*$//')
-          MC_VERSION=$(grep '^minecraft_version=' gradle.properties | cut -d'=' -f2)
+          VERSION=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2 | tr -d '\r')
+          LOADER=$(grep '^loader_version=' gradle.properties | cut -d'=' -f2 | tr -d '\r')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "archive=$ARCHIVE" >> $GITHUB_OUTPUT
-          echo "clean_version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
-          echo "mc_version=$MC_VERSION" >> $GITHUB_OUTPUT
-          echo "Version complète: $VERSION"
-          echo "Archive base: $ARCHIVE"
-          echo "Version clean: $CLEAN_VERSION"
-          echo "MC: $MC_VERSION"
+          echo "loader=$LOADER" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
 
       - name: Download build artifacts
         uses: dawidd6/action-download-artifact@v2
@@ -48,42 +41,42 @@ jobs:
           path: artifacts
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Remove sources.jar
-        run: find artifacts -name "*-sources.jar" -delete
-
-      - name: Rename JAR for GitHub Release asset
+      - name: Clean and rename JARs
         run: |
           set -e
-          SRC="artifacts/${{ steps.get_version.outputs.archive }}-${{ steps.get_version.outputs.version }}.jar"
-          if [ ! -f "$SRC" ]; then
-            echo "Primary jar not found at $SRC; searching fallback…"
-            SRC=$(find artifacts -type f -name "*.jar" | head -n 1)
-          fi
-          DEST="artifacts/Dailyrewards-${{ steps.get_version.outputs.clean_version }}-for-1.21.5.jar"
-          echo "Renaming $SRC -> $DEST"
-          if [ "$SRC" = "$DEST" ]; then
-            echo "Already correctly named: $SRC"
-          else
-            mv "$SRC" "$DEST"
-          fi
-          ls -l artifacts
+          find artifacts -name "*-dev.jar" -delete
+          find artifacts -name "*-sources.jar" -delete
+          find artifacts -mindepth 2 -name "*.jar" -exec mv {} artifacts/ \;
+          find artifacts -mindepth 1 -type d -delete
+          echo "=== Release JARs ==="
+          ls -l artifacts/*.jar
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.get_version.outputs.clean_version }}
-          name: "DailyRewards v${{ steps.get_version.outputs.clean_version }}"
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: "DailyRewards v${{ steps.get_version.outputs.version }}"
           body: |
-            ## 🎁 DailyRewards v${{ steps.get_version.outputs.clean_version }}
+            ## 🎁 DailyRewards v${{ steps.get_version.outputs.version }}
             
-            **📥 Download:** `${{ steps.get_version.outputs.archive }}-${{ steps.get_version.outputs.version }}.jar`
+            **📥 Downloads:** One JAR per Minecraft version — pick the one matching your game version.
             
             **🔧 Compatibility:**
-            - Minecraft 1.21.5
-            - Fabric Loader 0.16.14+
+            | Module | Minecraft Versions |
+            |--------|-------------------|
+            | 1-21-3 | 1.21.3 |
+            | 1-21-4 | 1.21.4 |
+            | 1-21-5 | 1.21.5 |
+            | 1-21-6 | 1.21.6, 1.21.7, 1.21.8 |
+            | 1-21-10 | 1.21.9, 1.21.10 |
+            | 1-21-11 | 1.21.11 |
+            
+            **Requirements:**
+            - Fabric Loader ${{ steps.get_version.outputs.loader }}+
             - Fabric API required
+            - Fabric Language Kotlin required
             
             **📋 Changes:**
             Build from commit: ${{ github.sha }}
@@ -93,6 +86,6 @@ jobs:
             - [GitHub Repository](https://github.com/Cqseur/DailyRewards)
             
           prerelease: false
-          draft: false  
+          draft: false
           files: |
-            artifacts/**/*.jar
+            artifacts/*.jar
