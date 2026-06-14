@@ -10,7 +10,7 @@
 
 **🎁 Automate Hypixel Skyblock daily rewards with beautiful card animations and instant claim notifications**
 
-[📥 Download on Modrinth](#-installation) • [⚡ Features](#-features) • [💬 Discord](https://discord.gg/tkUqGeDN5J)
+[📥 Download on Modrinth](#-installation) • [⚡ Features](#-features) • [💬 Discord](https://discord.gg/Y6ADqB3zGv)
 
 </div>
 
@@ -233,7 +233,7 @@ cd DailyRewards
 ### 🚀 **Development & Support**
 - **🤖 GitHub Repository** - [Source Code](https://github.com/Cqseur/DailyRewards)
 - **🐛 Bug Reports** - [GitHub Issues](https://github.com/Cqseur/DailyRewards/issues)
-- **💬 Discord Support** - [Join Community](https://discord.gg/tkUqGeDN5J)
+- **💬  Support** - [Join Community](https://discord.gg/Y6ADqB3zGv)
 - **📊 Project Stats** - [Modrinth Analytics](https://modrinth.com/mod/hypixel-dailyrewards)
   
 ---
@@ -299,7 +299,7 @@ This project is licensed under the **LGPL-3.0-only License** - see the [LICENSE]
 
 **Made with ❤️ for the Hypixel community**
 
-[🟢 Download on Modrinth](https://modrinth.com/mod/hypixel-dailyrewards#download) • [🌟 Star on GitHub](https://github.com/Cqseur/DailyRewards) • [💬 Join Discord](https://discord.gg/tkUqGeDN5J)
+[🟢 Download on Modrinth](https://modrinth.com/mod/hypixel-dailyrewards#download) • [🌟 Star on GitHub](https://github.com/Cqseur/DailyRewards) • [💬 Join Discord](https://discord.gg/Y6ADqB3zGv)
 
 ---
 
