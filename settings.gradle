@@ -17,6 +17,8 @@ include '1-21-5'
 include '1-21-6'
 include '1-21-10'
 include '1-21-11'
+include '26-1'
+include '26-2'
 
 project(':1-21-3').projectDir = file('fabric/1-21-3')
 project(':1-21-4').projectDir = file('fabric/1-21-4')
@@ -24,3 +26,5 @@ project(':1-21-5').projectDir = file('fabric/1-21-5')
 project(':1-21-6').projectDir = file('fabric/1-21-6')
 project(':1-21-10').projectDir = file('fabric/1-21-10')
 project(':1-21-11').projectDir = file('fabric/1-21-11')
+project(':26-1').projectDir = file('fabric/26-1')
+project(':26-2').projectDir = file('fabric/26-2')
