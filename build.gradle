@@ -6,6 +6,18 @@ plugins {
 	id 'maven-publish'
 }
 
+// Mapping module name -> display label used in Modrinth versionName
+def moduleDisplayVersion = [
+	'1-21-3' : '1.21.3',
+	'1-21-4' : '1.21.4',
+	'1-21-5' : '1.21.5',
+	'1-21-6' : '1.21.6',
+	'1-21-10': '1.21.10',
+	'1-21-11': '1.21.11',
+	'26-1'   : '26.1.x',
+	'26-2'   : '26.2'
+]
+
 // Mapping module name -> Minecraft game versions supported by that module
 def moduleGameVersions = [
 	'1-21-3' : ['1.21.2', '1.21.3'],
@@ -61,7 +73,7 @@ subprojects {
 		token = System.getenv('MODRINTH_TOKEN')
 		projectId = 'AoDOmdGD'
 		versionNumber = rootProject.properties.mod_version
-		versionName = "[${project.minecraft_version}] DailyRewards ${rootProject.properties.mod_version}"
+		versionName = "[${moduleDisplayVersion.getOrDefault(project.name, project.minecraft_version)}] DailyRewards ${rootProject.properties.mod_version}"
 		versionType = 'release'
 		uploadFile = jar
 		changelog = changelogContent
